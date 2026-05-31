@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.telemetry.collector.model.ErrorEventType;
 
 import java.time.Instant;
@@ -18,15 +19,22 @@ import java.time.Instant;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DeviceAddedEvent.class, name = "DEVICE_ADDED"),
-        // .... другие подтипы SensorEvent ...
-//        @JsonSubTypes.Type(value = SwitchSensorEvent.class, name = "SWITCH_SENSOR_EVENT")
+        @JsonSubTypes.Type(value = DeviceRemovedEvent.class, name = "DEVICE_REMOVED"),
+        @JsonSubTypes.Type(value = ScenarioAddedEvent.class, name = "SCENARIO_ADDED"),
+        @JsonSubTypes.Type(value = ScenarioRemovedEvent.class, name = "SCENARIO_REMOVED"),
 })
 @Getter
 @Setter
+@ToString
 public abstract class HubEvent {
-//    @NotBlank
+    @NotBlank
     private String hubId;
-    private Instant timestamp = Instant.now();
+    private Instant timestamp;
+
+    protected HubEvent(String hubId) {
+        this.hubId = hubId;
+        this.timestamp = Instant.now();
+    }
 
     @NotNull
     public abstract HubEventType getType();

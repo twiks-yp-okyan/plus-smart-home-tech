@@ -1,16 +1,18 @@
 package ru.practicum.telemetry.collector.service.handler.hub;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
+import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.telemetry.collector.model.hub.HubEvent;
 import ru.practicum.telemetry.collector.model.hub.HubEventType;
 import ru.practicum.telemetry.collector.service.KafkaEventProducer;
 import ru.practicum.telemetry.collector.service.handler.HubEventHandler;
 
-//@RequiredArgsConstructor
+@Slf4j
 public abstract class BaseHubEventHandler<T extends SpecificRecord> implements HubEventHandler {
     private final KafkaEventProducer kafkaEventProducer;
-//    @Value("${KAFKA_TOPIC_NAME_HUBS_EVENTS}")
-//    private final String KAFKA_TOPIC_NAME;
+    @Value("${KAFKA_TOPIC_NAME_HUBS_EVENTS}")
+    private String KAFKA_TOPIC_NAME;
 
     protected BaseHubEventHandler(KafkaEventProducer kafkaEventProducer) {
         this.kafkaEventProducer = kafkaEventProducer;
@@ -22,6 +24,7 @@ public abstract class BaseHubEventHandler<T extends SpecificRecord> implements H
 
     public void handle(HubEvent event) {
         T avroData = mapToAvro(event);
-        kafkaEventProducer.send("telemetry.hubs.v1", avroData);
+        log.debug("Send mapped to Avro event to KafkaProducerService with data: {}", avroData);
+        kafkaEventProducer.send(KAFKA_TOPIC_NAME, avroData);
     }
 }
