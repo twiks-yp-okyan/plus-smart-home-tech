@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.telemetry.collector.model.hub.HubEvent;
 import ru.practicum.telemetry.collector.model.hub.HubEventType;
 import ru.practicum.telemetry.collector.model.sensor.SensorEvent;
+import ru.practicum.telemetry.collector.model.sensor.SensorEventType;
 import ru.practicum.telemetry.collector.service.handler.HubEventHandler;
+import ru.practicum.telemetry.collector.service.handler.SensorEventHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -21,15 +23,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EventController {
     private final Map<HubEventType, HubEventHandler> hubEventHandlers;
+    private final Map<SensorEventType, SensorEventHandler> sensorEventHandlers;
 
-    public EventController(List<HubEventHandler> hubEventHandlers) {
+    public EventController(List<HubEventHandler> hubEventHandlers, List<SensorEventHandler> sensorEventHandlers) {
         this.hubEventHandlers = hubEventHandlers.stream()
                 .collect(Collectors.toMap(HubEventHandler::getMessageType, Function.identity()));
+        this.sensorEventHandlers = sensorEventHandlers.stream()
+                .collect(Collectors.toMap(SensorEventHandler::getMessageType, Function.identity()));
     }
 
     @PostMapping("/sensors")
     public void collectSensorEvent(@Valid @RequestBody SensorEvent request) {
-
+        log.debug("Received hub event with type = {} and body: {}", request.getType(), request);
+        SensorEventHandler handler = sensorEventHandlers.get(request.getType());
+        if (handler == null) {
+            throw new IllegalArgumentException("Нет обработчика для события " + request);
+        }
+        handler.handle(request);
     }
 
     @PostMapping("/hubs")

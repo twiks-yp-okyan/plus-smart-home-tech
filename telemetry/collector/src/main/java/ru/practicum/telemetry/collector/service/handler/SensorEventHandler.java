@@ -1,9 +1,10 @@
 package ru.practicum.telemetry.collector.service.handler;
 
 import ru.practicum.telemetry.collector.model.sensor.SensorEvent;
+import ru.practicum.telemetry.collector.model.sensor.SensorEventType;
 
-public interface SensorEventHandler<T> {
-    SensorEvent getMessageType();
+public interface SensorEventHandler {
+    SensorEventType getMessageType();
 
-    T handle(SensorEvent event);
+    void handle(SensorEvent event);
 }

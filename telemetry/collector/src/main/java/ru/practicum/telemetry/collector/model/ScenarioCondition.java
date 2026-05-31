@@ -6,6 +6,6 @@ import lombok.Data;
 public class ScenarioCondition {
     private String sensorId;
     private ScenarioConditionType type;
-    private ConditionsOperations operation;
+    private ConditionOperation operation;
     private Integer value;
 }
