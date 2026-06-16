@@ -2,7 +2,6 @@ package ru.practicum.telemetry.collector.controller;
 
 import com.google.protobuf.Empty;
 import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -45,7 +44,11 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             responseObserver.onCompleted();
         } catch (Exception e) {
             // в случае исключения отправляем ошибку клиенту
-            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Ошибка обработки события датчика", e);
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Internal error: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
         }
     }
 
@@ -64,7 +67,11 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             responseObserver.onCompleted();
         } catch (Exception e) {
             // в случае исключения отправляем ошибку клиенту
-            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Ошибка обработки события датчика", e);
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Internal error: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
         }
     }
 }
