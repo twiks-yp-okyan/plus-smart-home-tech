@@ -1,7 +1,5 @@
 package ru.practicum.telemetry.collector.config;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
