@@ -1,5 +1,6 @@
 package ru.practicum.telemetry.collector.service.handler.hub;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.telemetry.collector.service.KafkaEventProducer;
 import ru.practicum.telemetry.collector.utils.EnumMapper;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.kafka.telemetry.event.*;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAddedEventAvro> {
     public ScenarioAddedEventHandler(KafkaEventProducer kafkaEventProducer) {
         super(kafkaEventProducer);
@@ -33,20 +35,24 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
     }
 
     private ScenarioConditionAvro mapScenarioConditionToAvro(ScenarioConditionProto condition) {
-        ScenarioConditionAvro avroCondition = ScenarioConditionAvro.newBuilder()
+        Object conditionValue = switch (condition.getValueCase()) {
+            case INT_VALUE -> condition.getIntValue();
+            case BOOL_VALUE -> condition.getBoolValue();
+            default -> null;
+        };
+
+        log.debug("condition value type - {}; int value - {}, bool value - {}",
+                condition.getValueCase(),
+                condition.getIntValue(),
+                condition.getBoolValue()
+        );
+
+        return ScenarioConditionAvro.newBuilder()
                 .setSensorId(condition.getSensorId())
                 .setType(EnumMapper.map(condition.getType(), ConditionTypeAvro.class))
                 .setOperation(EnumMapper.map(condition.getOperation(), ConditionOperationAvro.class))
-                .setValue(null)
+                .setValue(conditionValue)
                 .build();
-
-        switch (condition.getValueCase()) {
-            case INT_VALUE -> avroCondition.setValue(condition.getIntValue());
-            case BOOL_VALUE -> avroCondition.setValue(condition.getBoolValue());
-            default -> avroCondition.setValue(null);
-        };
-
-        return avroCondition;
     }
 
     private List<ScenarioConditionAvro> mapConditionsToAvro(List<ScenarioConditionProto> conditions) {
