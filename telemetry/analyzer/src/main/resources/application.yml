@@ -1,0 +1,25 @@
+grpc:
+  client:
+    hub-router:
+      address: 'static://localhost:59090'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+
+kafka:
+  bootstrap-servers: localhost:9092
+  auto-offset-reset: earliest
+  consumers:
+    snapshots:
+      topic: telemetry.snapshots.v1
+      group-id: snapshots-group
+      max-poll-records: 100
+    hubs:
+      topic: telemetry.hubs.v1
+      group-id: hubs-group
+      max-poll-records: 50
+
+logging:
+  level:
+    root: INFO
+    ru.practicum.telemetry.analyzer: DEBUG
