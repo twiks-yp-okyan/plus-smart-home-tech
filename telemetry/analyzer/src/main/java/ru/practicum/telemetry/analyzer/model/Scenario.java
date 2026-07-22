@@ -1,10 +1,7 @@
 package ru.practicum.telemetry.analyzer.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +10,7 @@ import java.util.Map;
 @Table(name = "scenarios", uniqueConstraints = @UniqueConstraint(columnNames = {"hub_id", "name"}))
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Scenario {
@@ -23,7 +21,8 @@ public class Scenario {
     private String hubId;
     @Column(name = "name")
     private String name;
-    @OneToMany
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(
             table = "scenario_conditions",
             name = "sensor_id"
@@ -35,7 +34,7 @@ public class Scenario {
     )
     private Map<String, Condition> conditions = new HashMap<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(
             table = "scenario_actions",
             name = "sensor_id"

@@ -7,7 +7,7 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.common.serialization.Deserializer;
-import ru.practicum.telemetry.aggregator.exception.DeserializationException;
+import ru.practicum.telemetry.analyzer.exception.DeserializationException;
 
 public class AvroCommonDeserializer<T extends SpecificRecordBase> implements Deserializer<T> {
     private final DecoderFactory decoderFactory;
