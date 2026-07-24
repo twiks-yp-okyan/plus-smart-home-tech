@@ -33,7 +33,11 @@ public class ScenarioAddedEventHandler implements HubEventHandler {
     public void handle(HubEventAvro event) {
         ScenarioAddedEventAvro scenarioAdded = (ScenarioAddedEventAvro) event.getPayload();
         log.debug("Save new scenario with name - {} for hub - {}", scenarioAdded.getName(), event.getHubId());
-        repository.save(mapToScenario(event.getHubId(), scenarioAdded));
+        Scenario scenario = repository.findByHubIdAndName(event.getHubId(), scenarioAdded.getName())
+                .orElse(null);
+        if (scenario == null) {
+            repository.save(mapToScenario(event.getHubId(), scenarioAdded));
+        }
     }
 
     private Scenario mapToScenario(String hubId, ScenarioAddedEventAvro scenarioAdded) {

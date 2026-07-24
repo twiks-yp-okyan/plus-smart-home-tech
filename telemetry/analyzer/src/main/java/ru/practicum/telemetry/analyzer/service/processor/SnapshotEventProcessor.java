@@ -7,9 +7,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.stereotype.Component;
+import ru.practicum.telemetry.analyzer.service.ActionSender;
+import ru.practicum.telemetry.analyzer.service.handler.SnapshotEventHandler;
+import ru.yandex.practicum.grpc.telemetry.event.DeviceActionRequest;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -18,6 +22,8 @@ import java.util.Map;
 public class SnapshotEventProcessor {
     private final Map<String, KafkaConsumer<Void, SpecificRecord>> consumers;
     private final Duration CONSUME_ATTEMPT_TIMEOUT = Duration.ofMillis(1000);
+    private final SnapshotEventHandler snapshotEventHandler;
+    private final ActionSender actionSender;
 
     public void start() {
         KafkaConsumer<Void, SpecificRecord> consumer = consumers.get("snapshots");
@@ -32,7 +38,10 @@ public class SnapshotEventProcessor {
                     log.debug("SNAPSHOT Event with: offset - {}, value - {}", record.offset(), record.value());
 
                     SensorsSnapshotAvro sensorsSnapshotAvro = (SensorsSnapshotAvro) record.value();
-                    // TODO - обработка снапшота
+                    List<DeviceActionRequest> requests = snapshotEventHandler.handle(sensorsSnapshotAvro);
+                    requests.stream()
+                            .peek(req -> log.debug("Отправка запросов в gRPC - {}", req))
+                            .forEach(actionSender::sendAction);
                 }
                 consumer.commitAsync();
             }
