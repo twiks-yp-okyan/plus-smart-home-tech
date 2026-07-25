@@ -28,13 +28,11 @@ public class SnapshotEventHandlerImpl implements SnapshotEventHandler {
     public List<DeviceActionRequest> handle(SensorsSnapshotAvro event) {
         log.debug("Начало обработки снэпшота для хаба - {}", event.getHubId());
         List<String> successScenarios = scenarioService.checkHubScenarios(event.getHubId(), event);
-        log.debug("Собираем Scenario-Sensor-Action для каждого из успешных сценариев");
         Map<String, Map<String, Action>> successScenariosAction = successScenarios.stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
                         scenarioName -> scenarioService.scenarioActions(event.getHubId(), scenarioName)
                 ));
-        log.debug("Собираем Sensor-Action для успешных сценариев хаба для отправки в gRPC");
         return successScenariosAction.entrySet().stream()
                 .flatMap(
                         scenarioSensorAction -> scenarioSensorAction.getValue().entrySet().stream()
