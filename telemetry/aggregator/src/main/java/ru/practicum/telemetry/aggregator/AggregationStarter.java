@@ -32,9 +32,9 @@ public class AggregationStarter {
     private final Consumer<Void, SensorEventAvro> consumer;
     private final SnapshotStateService snapshotStateService;
 
-    @Value("${KAFKA_TELEMETRY_SENSORS_DATA_TOPIC}")
+    @Value("${kafka.consumer.topic}")
     private String KAFKA_TELEMETRY_SENSORS_DATA_TOPIC;
-    @Value("${KAFKA_TELEMETRY_SNAPSHOT_DATA_TOPIC}")
+    @Value("${kafka.producer.topic}")
     private String KAFKA_TELEMETRY_SNAPSHOT_DATA_TOPIC;
 
     private final Duration CONSUME_ATTEMPT_TIMEOUT = Duration.ofMillis(1000);
