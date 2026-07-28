@@ -14,7 +14,7 @@ import java.util.Properties;
 
 @Configuration
 public class KafkaConfig {
-    @Value("${KAFKA_BOOTSTRAP_SERVERS}")
+    @Value("${kafka.bootstrap-servers}")
     private String KAFKA_BOOTSTRAP_SERVERS;
 
     @Bean

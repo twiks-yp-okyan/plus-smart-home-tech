@@ -1,0 +1,14 @@
+grpc:
+  server:
+    port: 59091
+
+logging:
+  level:
+    ru.practicum.telemetry.collector: DEBUG
+
+kafka:
+  producer:
+    hub:
+      topic: telemetry.hubs.v1
+    sensor:
+      topic: telemetry.sensors.v1

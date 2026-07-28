@@ -13,7 +13,7 @@ import java.time.Instant;
 @Slf4j
 public abstract class BaseSensorEventHandler<T extends SpecificRecord> implements SensorEventHandler {
     private final KafkaEventProducer kafkaEventProducer;
-    @Value("${KAFKA_TOPIC_NAME_SENSORS_EVENTS}")
+    @Value("${kafka.producer.sensor.topic}")
     private String KAFKA_TOPIC_NAME;
 
     protected BaseSensorEventHandler(KafkaEventProducer kafkaEventProducer) {
