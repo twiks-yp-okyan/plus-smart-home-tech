@@ -4,8 +4,7 @@ CREATE TABLE IF NOT EXISTS orders (
     customer_email VARCHAR,
     status VARCHAR,
     status_details TEXT,
-    created_at TIMESTAMP DEFAULT now(),
-
+    created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS orders_items (
