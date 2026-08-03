@@ -13,7 +13,7 @@ import java.time.Instant;
 @Slf4j
 public abstract class BaseHubEventHandler<T extends SpecificRecord> implements HubEventHandler {
     private final KafkaEventProducer kafkaEventProducer;
-    @Value("${KAFKA_TOPIC_NAME_HUBS_EVENTS}")
+    @Value("${kafka.producer.hub.topic}")
     private String KAFKA_TOPIC_NAME;
 
     protected BaseHubEventHandler(KafkaEventProducer kafkaEventProducer) {

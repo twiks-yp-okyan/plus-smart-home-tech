@@ -20,11 +20,11 @@ import java.util.Properties;
 
 @Configuration
 public class KafkaClientConfig {
-    @Value("${KAFKA_BOOTSTRAP_SERVERS}")
+    @Value("${kafka.bootstrap-servers}")
     private String KAFKA_BOOTSTRAP_SERVERS;
-    @Value("${KAFKA_CONSUMER_GROUP_ID}")
+    @Value("${kafka.consumer.group-id}")
     private String KAFKA_CONSUMER_GROUP_ID;
-    @Value("${KAFKA_AUTO_OFFSET_RESET_CONFIG}")
+    @Value("${kafka.auto-offset-reset}")
     private String KAFKA_AUTO_OFFSET_RESET_CONFIG;
 
     @Bean

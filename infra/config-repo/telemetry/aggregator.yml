@@ -1,0 +1,7 @@
+kafka:
+  consumer:
+    poll-timeout: 100ms
+    group-id: aggregator-group
+    topic: telemetry.sensors.v1
+  producer:
+    topic: telemetry.snapshots.v1

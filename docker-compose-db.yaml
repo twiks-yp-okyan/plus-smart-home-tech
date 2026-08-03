@@ -1,13 +1,58 @@
 services:
-  db:
+  db-analyzer:
     image: postgres:16.1
-    container_name: postgres
+    container_name: db-analyzer
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=12345
       - POSTGRES_USER=db-user
       - POSTGRES_DB=smart-home
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-product:
+    image: postgres:16.1
+    container_name: db-product
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=db-user
+      - POSTGRES_DB=product-service
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-inventory:
+    image: postgres:16.1
+    container_name: db-inventory
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=db-user
+      - POSTGRES_DB=inventory-service
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-order:
+    image: postgres:16.1
+    container_name: db-order
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=db-user
+      - POSTGRES_DB=order-service
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
