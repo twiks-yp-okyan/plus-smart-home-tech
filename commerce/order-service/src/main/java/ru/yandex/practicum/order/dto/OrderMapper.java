@@ -10,6 +10,7 @@ public interface OrderMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "statusDetails", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "items", ignore = true)
     Order toEntity(CreateOrderRequest dto);
 
     @Mapping(target = "totalPrice", source = "totalPrice")

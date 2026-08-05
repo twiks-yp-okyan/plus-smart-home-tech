@@ -11,6 +11,11 @@ spring:
     url: jdbc:postgresql://localhost:5434/inventory-service
     username: db-user
     password: 12345
+  cloud.openfeign.client.config:
+    default:
+      connectTimeout: 2000
+      readTimeout: 3000
+      loggerLevel: basic
 
 logging:
   level:
