@@ -30,9 +30,6 @@ resilience4j:
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
-        record-exceptions:
-          - ru.yandex.practicum.order.exception.ProductServiceUnavailableException
-          - ru.yandex.practicum.order.exception.InventoryServiceUnavailableException
         ignore-exceptions:
           - ru.yandex.practicum.order.exception.NotFoundException
           - ru.yandex.practicum.order.exception.OrderProcessingException
@@ -44,3 +41,4 @@ resilience4j:
 logging:
   level:
     ru.yandex.practicum.order: DEBUG
+    io.github.resilience4j: DEBUG
