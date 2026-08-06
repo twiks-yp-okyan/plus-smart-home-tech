@@ -1,6 +1,6 @@
 package ru.yandex.practicum.order.dto;
 
 public enum OrderStatus {
-    CREATED,
+    PENDING_CONFIRMATION,
     CONFIRMED
 }

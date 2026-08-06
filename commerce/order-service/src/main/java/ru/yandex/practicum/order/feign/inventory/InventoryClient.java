@@ -3,10 +3,14 @@ package ru.yandex.practicum.order.feign.inventory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.order.feign.fallback.InventoryClientFallbackFactory;
 import ru.yandex.practicum.order.feign.inventory.dto.ReserveRequest;
 import ru.yandex.practicum.order.feign.inventory.dto.ReserveResponse;
 
-@FeignClient(name = "inventory-service")
+@FeignClient(
+        name = "inventory-service",
+        fallbackFactory = InventoryClientFallbackFactory.class
+)
 public interface InventoryClient {
 
     @PostMapping("/api/inventory/reserve")

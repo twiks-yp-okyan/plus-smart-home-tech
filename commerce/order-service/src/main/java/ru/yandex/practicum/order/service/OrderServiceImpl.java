@@ -23,9 +23,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto create(Order order) {
+    public OrderDto createConfirmed(Order order) {
         order.setStatus(OrderStatus.CONFIRMED);
         order.setStatusDetails("Order was created.");
+        order.setCreatedAt(LocalDateTime.now());
+
+        return orderMapper.toDto(repository.save(order));
+    }
+
+    @Override
+    @Transactional
+    public OrderDto createPending(Order order) {
+        order.setStatus(OrderStatus.PENDING_CONFIRMATION);
+        order.setStatusDetails("Order was created but need underwriting for product data and reserving stock");
         order.setCreatedAt(LocalDateTime.now());
 
         return orderMapper.toDto(repository.save(order));
