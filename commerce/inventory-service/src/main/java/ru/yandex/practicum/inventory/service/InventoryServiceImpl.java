@@ -67,7 +67,10 @@ public class InventoryServiceImpl implements InventoryService {
                 ));
 
         if (compareQuantities(existingInventory.getAvailableQuantity(), request.quantity())) {
-            updateInventory(existingInventory, request.quantity(), "RESERVE");
+            Integer newAvailableQuantity = existingInventory.getAvailableQuantity() - request.quantity();
+            Integer newReservedQuantity = existingInventory.getReservedQuantity() + request.quantity();
+            existingInventory.setAvailableQuantity(newAvailableQuantity);
+            existingInventory.setReservedQuantity(newReservedQuantity);
             Inventory updatedInventory = repository.save(existingInventory);
             return buildResponse(updatedInventory, "Товар успешно зарезервирован");
         } else {
@@ -87,7 +90,10 @@ public class InventoryServiceImpl implements InventoryService {
                 ));
 
         if (compareQuantities(existingInventory.getReservedQuantity(), request.quantity())) {
-            updateInventory(existingInventory, request.quantity(), "RELEASE");
+            Integer newAvailableQuantity = existingInventory.getAvailableQuantity() + request.quantity();
+            Integer newReservedQuantity = existingInventory.getReservedQuantity() - request.quantity();
+            existingInventory.setAvailableQuantity(newAvailableQuantity);
+            existingInventory.setReservedQuantity(newReservedQuantity);
             Inventory updatedInventory = repository.save(existingInventory);
             return buildResponse(updatedInventory, "Товар успешно снят с резерва");
         } else {
@@ -100,21 +106,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     private boolean compareQuantities(Integer available, Integer requested) {
         return available.compareTo(requested) >= 0;
-    }
-
-    private void updateInventory(Inventory inventory, Integer reservedQuantity, String type) {
-        Integer coef;
-        if (type.equals("RESERVE")) {
-            coef = 1;
-        } else if (type.equals("RELEASE")) {
-            coef = -1;
-        } else {
-            throw new RuntimeException("Wrong Inventory update event type");
-        }
-        Integer newAvailableQuantity = inventory.getAvailableQuantity() - reservedQuantity * coef;
-        Integer newReservedQuantity = inventory.getReservedQuantity() + reservedQuantity * coef;
-        inventory.setAvailableQuantity(newAvailableQuantity);
-        inventory.setReservedQuantity(newReservedQuantity);
     }
 
     private ReserveResponse buildResponse(Inventory inventory, String message) {
