@@ -67,12 +67,38 @@ public class InventoryServiceImpl implements InventoryService {
                 ));
 
         if (compareQuantities(existingInventory.getAvailableQuantity(), request.quantity())) {
-            updateInventoryAfterReserve(existingInventory, request.quantity());
+            Integer newAvailableQuantity = existingInventory.getAvailableQuantity() - request.quantity();
+            Integer newReservedQuantity = existingInventory.getReservedQuantity() + request.quantity();
+            existingInventory.setAvailableQuantity(newAvailableQuantity);
+            existingInventory.setReservedQuantity(newReservedQuantity);
             Inventory updatedInventory = repository.save(existingInventory);
-            return buildResponse(updatedInventory);
+            return buildResponse(updatedInventory, "Товар успешно зарезервирован");
         } else {
             throw new InsufficientStockException(
                     String.format("Запрошенное количество превышает доступный остаток для товара productId = %d",
+                            request.productId())
+            );
+        }
+    }
+
+    @Override
+    @Transactional
+    public ReserveResponse release(ReserveRequest request) {
+        Inventory existingInventory = repository.findByProductId(request.productId())
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Записи с productId = %d не существует.", request.productId())
+                ));
+
+        if (compareQuantities(existingInventory.getReservedQuantity(), request.quantity())) {
+            Integer newAvailableQuantity = existingInventory.getAvailableQuantity() + request.quantity();
+            Integer newReservedQuantity = existingInventory.getReservedQuantity() - request.quantity();
+            existingInventory.setAvailableQuantity(newAvailableQuantity);
+            existingInventory.setReservedQuantity(newReservedQuantity);
+            Inventory updatedInventory = repository.save(existingInventory);
+            return buildResponse(updatedInventory, "Товар успешно снят с резерва");
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Запрошенное количество превышает резерв для товара productId = %d",
                             request.productId())
             );
         }
@@ -82,14 +108,7 @@ public class InventoryServiceImpl implements InventoryService {
         return available.compareTo(requested) >= 0;
     }
 
-    private void updateInventoryAfterReserve(Inventory inventory, Integer reservedQuantity) {
-        Integer newAvailableQuantity = inventory.getAvailableQuantity() - reservedQuantity;
-        Integer newReservedQuantity = inventory.getReservedQuantity() + reservedQuantity;
-        inventory.setAvailableQuantity(newAvailableQuantity);
-        inventory.setReservedQuantity(newReservedQuantity);
-    }
-
-    private ReserveResponse buildResponse(Inventory inventory) {
-        return new ReserveResponse(true, inventory.getAvailableQuantity(), "Товар успешно зарезервирован");
+    private ReserveResponse buildResponse(Inventory inventory, String message) {
+        return new ReserveResponse(true, inventory.getAvailableQuantity(), message);
     }
 }

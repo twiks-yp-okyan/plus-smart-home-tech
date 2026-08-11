@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.order.dto.CreateOrderRequest;
 import ru.yandex.practicum.order.dto.OrderDto;
+import ru.yandex.practicum.order.service.OrderOrchestrationService;
 import ru.yandex.practicum.order.service.OrderService;
 
 import java.util.List;
@@ -15,11 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final OrderOrchestrationService orderOrchestrationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDto create(@Valid @RequestBody CreateOrderRequest request) {
-        return orderService.create(request);
+        return orderOrchestrationService.createOrder(request);
     }
 
     @GetMapping

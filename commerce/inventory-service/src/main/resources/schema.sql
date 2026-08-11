@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS inventories (
     product_id BIGINT,
     quantity INTEGER,
     reserved_quantity INTEGER,
-    available_quantity INTEGER
+    available_quantity INTEGER,
+    version BIGINT
 );

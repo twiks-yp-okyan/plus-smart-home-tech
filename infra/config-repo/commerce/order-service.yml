@@ -11,7 +11,34 @@ spring:
     url: jdbc:postgresql://localhost:5435/order-service
     username: db-user
     password: 12345
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 3000
+            loggerLevel: basic
+      circuitbreaker:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        ignore-exceptions:
+          - ru.yandex.practicum.order.exception.NotFoundException
+          - ru.yandex.practicum.order.exception.OrderProcessingException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
 
 logging:
   level:
     ru.yandex.practicum.order: DEBUG
+    io.github.resilience4j: DEBUG

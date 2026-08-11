@@ -23,17 +23,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto create(CreateOrderRequest request) {
-        Order order = orderMapper.toEntity(request);
-        order.setStatus(OrderStatus.CREATED);
+    public OrderDto createConfirmed(Order order) {
+        order.setStatus(OrderStatus.CONFIRMED);
         order.setStatusDetails("Order was created.");
         order.setCreatedAt(LocalDateTime.now());
 
-        order.getItems().clear();
-        request.items().forEach(orderItemDto -> {
-            OrderItem orderItem = orderItemMapper.toEntity(orderItemDto);
-            order.addItem(orderItem);
-        });
+        return orderMapper.toDto(repository.save(order));
+    }
+
+    @Override
+    @Transactional
+    public OrderDto createPending(Order order) {
+        order.setStatus(OrderStatus.PENDING_CONFIRMATION);
+        order.setStatusDetails("Order was created but need underwriting for product data and reserving stock");
+        order.setCreatedAt(LocalDateTime.now());
 
         return orderMapper.toDto(repository.save(order));
     }
